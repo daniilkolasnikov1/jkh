@@ -1,0 +1,129 @@
+{% extends "main/layout.html" %} {% block content %}
+<h1>Транзакции</h1>
+<form method="get" class="d-flex gap-3 align-items-center">
+  <div class="flex-column">
+    <label for="date">Дата:</label>
+    <input
+      class="form-control"
+      id="date"
+      type="date"
+      name="date"
+      value="{{ request.GET.date }}"
+    />
+  </div>
+  <div class="flex-column">
+    <label for="sum">Сумма:</label>
+    <input
+      class="form-control"
+      id="sum"
+      type="number"
+      name="sum"
+      value="{{ request.GET.sum }}"
+    />
+  </div>
+
+  <div class="flex-column">
+    <label for="address">Адрес:</label>
+    <input
+      class="form-control"
+      id="address"
+      type="text"
+      name="address"
+      value="{{ request.GET.address }}"
+    />
+  </div>
+  <input type="submit" class="btn btn-primary mt-3" value="Фильтровать" />
+</form>
+<div class="my-3">
+  Сортировать по:
+  <a href="?sort=date">Дате</a> | <a href="?sort=sum">Сумма</a> |
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th class="col">Дата</th>
+      <th class="col">Сумма</th>
+      <th class="col">Адрес</th>
+      <th class="col">Действия</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for payment in payments %}
+    <tr>
+      <td>{{ payment.date }}</td>
+      <td>{{ payment.sum }}</td>
+      <td data-city="{{payment.address}}">{{ payment.address }}</td>
+      <td>
+        <a href="{% url 'edit_payment' pk=payment.pk %}">Редактировать</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="5">Транзакций пока нету</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="{% url 'new_payment' %}">Добавить новую транзакцию</a>
+<canvas id="Graph"> </canvas>
+<script>
+  const NodeCities = document.querySelectorAll("[data-city]");
+  const cities = [];
+  NodeCities.forEach((city, index) => {
+    cities.push(city.innerHTML);
+  });
+  console.log(cities)
+  const citiesVariables = new Set(cities);
+  console.log(citiesVariables)
+
+  const citiesObjects = []
+  citiesVariables.forEach(city => {
+    citiesObjects.push({city:city, count: 0})
+  })
+  cities.map(city => {
+    citiesObjects.map(cityObject => {
+      if(city == cityObject.city) {
+        cityObject.count += 1;
+      }
+    })
+  })
+
+  const cityCounts = []
+  citiesObjects.map(cityObject => {
+    cityCounts.push(cityObject.count)
+  })
+  console.log(cityCounts)
+  const ctx = document.getElementById("Graph");
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: [...citiesVariables],
+      datasets: [
+        {
+          label: "Количество платежей",
+          data: [...cityCounts],
+          borderWidth: 1,
+          backgroundColor: [
+            "rgba(54, 162, 235, 0.8)",
+            "rgba(153, 102, 255, 0.8)",
+            "rgba(201, 203, 207, 0.8)",
+          ],
+          borderColor: [
+            "rgb(54, 162, 235)",
+            "rgb(153, 102, 255)",
+            "rgb(201, 203, 207)",
+          ],
+        },
+      ],
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+
+</script>
+{% endblock %}

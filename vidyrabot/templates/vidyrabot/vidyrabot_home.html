@@ -1,0 +1,19 @@
+{%extends 'main/layout.html'%}
+
+{% block title %} Виды услуг {%endblock%}
+
+{% block content %}
+    <div class="vydrabot-wrapper">
+        <h1>Виды услуг</h1>
+        <div class="vydrabot">
+
+            {% for el in vidyrabot %}
+                <div class="alert alert-warning">
+                    <h3>{{ el.title }}</h3>
+                        <p>{{ el.full_text }}</p>
+                        <p>{{ el.summ_uslug }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{%endblock%}
