@@ -22,17 +22,17 @@ class Tenant(models.Model):
 
 
 class Payment(models.Model):
-    # STATUS_CHOICES = [
-    #     ('payed', 'Оплачен'),
-    #     ('not_payed', 'Не оплачен'),
-    # ]
+    STATUS_CHOICES = [
+        ('payed', 'Оплачен'),
+        ('not_payed', 'Не оплачен'),
+    ]
     date = models.DateField()
     sum = models.IntegerField()
-    # status = models.CharField(
-    #     max_length=10,
-    #     choices=STATUS_CHOICES,
-    #     default='not_payed',
-    # )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='not_payed',
+    )
     address = models.ForeignKey(House, on_delete=models.CASCADE, null=True, blank=True)
     tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
 
